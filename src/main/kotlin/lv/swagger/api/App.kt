@@ -3,13 +3,8 @@
  */
 package lv.swagger.api
 
-class App {
-    val greeting: String
-        get() {
-            return "Hello world."
-        }
-}
+import spark.Spark.get
 
-fun main(args: Array<String>) {
-    println(App().greeting)
+fun main() {
+    get("/hello") { _, _ -> "hello world!" }
 }
