@@ -3,7 +3,9 @@ package lv.swagger.api.routes
 import com.github.salomonbrys.kotson.fromJson
 import com.github.salomonbrys.kotson.toJson
 import com.google.gson.*
+import io.swagger.v3.oas.annotations.Hidden
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.parameters.RequestBody
@@ -29,7 +31,20 @@ import javax.ws.rs.Path
         )
     )
 )
-fun routeProducts() {
+fun routeProducts(
+    @Parameter(hidden = true) apiRequestValidator: APIRequestValidator = APIRequestValidator()
+) {
+  before("/products") { req, resp ->
+    val errors = apiRequestValidator.validate(req)
+    if (errors.isNotEmpty()) {
+      resp.header("Content-Type", "application/json")
+      halt(
+          400,
+          gson().toJson(APIErrors(errors = errors))
+      )
+    }
+  }
+
   post("/products") { req, resp ->
     val product = gson()
         .fromJson<Product>(req.body())
@@ -50,7 +65,7 @@ object LocalDateDeserializer: JsonDeserializer<LocalDate>, JsonSerializer<LocalD
   }
 }
 
-private fun gson() = GsonBuilder()
+fun gson() = GsonBuilder()
     .registerTypeAdapter(LocalDate::class.java, LocalDateDeserializer)
     .create()
 

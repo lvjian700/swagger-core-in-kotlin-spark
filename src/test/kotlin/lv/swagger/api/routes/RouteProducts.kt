@@ -6,6 +6,8 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
+import io.mockk.every
+import io.mockk.mockk
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -21,11 +23,13 @@ object RouteProducts: Spek({
   describe("Products") {
     val port = 8088
     val url = "http://localhost:$port/test/products"
+    lateinit var apiRequestValidator: APIRequestValidator
 
     beforeGroup {
+      apiRequestValidator = mockk()
       port(port)
       Spark.path("/test") {
-        routeProducts()
+        routeProducts(apiRequestValidator)
       }
     }
 
@@ -48,6 +52,10 @@ object RouteProducts: Spek({
         addProperty("endDate", "2020-07-01")
       }
 
+      beforeEachTest {
+        every { apiRequestValidator.validate(any()) } returns emptyList<APIError>()
+      }
+
       it("creates product") {
 
         val response = post(url, requestBody)
@@ -66,9 +74,26 @@ object RouteProducts: Spek({
                   "endDate": "2020-07-01"
                 }"""
 
+
+      beforeEachTest {
+        every { apiRequestValidator.validate(any()) } returns listOf(
+            APIError(message = "Missing required field: name")
+        )
+      }
+
       it("returns bad request") {
         val response = post(url, requestBody)
         assertThat(response.code, equalTo(400))
+        assertThat(
+            gson().fromJson<JsonObject>(response.body!!.string()),
+            equalTo(gson().fromJson("""
+              {
+                "errors": [
+                  { "message": "Missing required field: name" }
+                ]
+              }
+              """))
+        )
       }
     }
   }
