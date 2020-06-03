@@ -3,11 +3,32 @@ package lv.swagger.api.routes
 import com.github.salomonbrys.kotson.fromJson
 import com.github.salomonbrys.kotson.toJson
 import com.google.gson.*
-import spark.Spark.post
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.parameters.RequestBody
+import spark.Spark.*
 import java.lang.reflect.Type
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import javax.ws.rs.POST
+import javax.ws.rs.Path
 
+@POST
+@Path("/products")
+@Operation(
+    requestBody = RequestBody(
+        description = "Post Product",
+        content = arrayOf(
+            Content(
+                mediaType = "application/json",
+                schema = Schema(
+                    implementation = Product::class
+                )
+            )
+        )
+    )
+)
 fun routeProducts() {
   post("/products") { req, resp ->
     val product = gson()
