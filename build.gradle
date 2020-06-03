@@ -17,6 +17,7 @@ ext {
     kotson_version = '2.5.0'
     swagger_version = '2.1.1'
     java_rs_version = '2.0'
+    swagger_request_validator_version = '2.10.0'
 }
 
 dependencies {
@@ -26,6 +27,7 @@ dependencies {
     implementation "com.sparkjava:spark-core:$spark_version"
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
     implementation "com.github.salomonbrys.kotson:kotson:$kotson_version"
+    implementation "com.atlassian.oai:swagger-request-validator-core:$swagger_request_validator_version"
 
     compileOnly "io.swagger.core.v3:swagger-jaxrs2:$swagger_version"
     compileOnly "io.swagger.core.v3:swagger-annotations:$swagger_version"
