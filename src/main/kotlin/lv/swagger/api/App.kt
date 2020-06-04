@@ -3,8 +3,8 @@
  */
 package lv.swagger.api
 
-import spark.Spark.get
+import lv.swagger.api.routes.routeProducts
 
 fun main() {
-    get("/hello") { _, _ -> "hello world!" }
+    routeProducts()
 }
