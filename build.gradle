@@ -60,3 +60,12 @@ resolve {
     openApiFile = file("${projectDir}/src/lv-api-info.yaml")
     outputDir = file("${projectDir}/src/main/resources/")
 }
+
+task copySwagger(type: Copy) {
+    from "${projectDir}/src/main/resources/lv-api-swagger.yaml"
+    into "${buildDir}/resources/main/"
+
+    dependsOn resolve
+}
+
+compileKotlin.finalizedBy(copySwagger)
