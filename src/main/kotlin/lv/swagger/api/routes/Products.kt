@@ -70,8 +70,14 @@ fun gson() = GsonBuilder()
     .create()
 
 data class Product(
+    @field:Schema(required = true)
     val name: String,
+
+    @field:Schema(required = true)
     val quote: Double,
+
+    @field:Schema()
     val startAt: LocalDate,
+    @field:Schema()
     val endDate: LocalDate
 )
